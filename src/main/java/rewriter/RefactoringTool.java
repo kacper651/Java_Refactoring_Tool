@@ -12,7 +12,7 @@ import java.io.IOException;
 public class RefactoringTool {
 
     public static void main(String[] args) {
-        // from input file Input.java
+
         CharStream input = null;
         try {
             input = CharStreams.fromFileName("src/rewriter/InsertDocListener.java");
@@ -29,7 +29,7 @@ public class RefactoringTool {
         walker.walk(inserter,tree);
         System.out.println(inserter.rewriter.getText());
         try {
-            var wr = new FileWriter("out.java");
+            var wr = new FileWriter("Out.java");
             wr.write(inserter.rewriter.getText());
             wr.close();
         } catch (IOException e) {
