@@ -15,7 +15,8 @@ public class Input {
 
     // sample methods which will contain a bunch of varialbes for xpath to map
     public void method1() {
-        int a = 1;
+        String a = " a ";
+        a = "b";
         int b = 2;
         int c = 3;
     }

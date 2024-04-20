@@ -5,6 +5,7 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.antlr.v4.runtime.tree.xpath.XPath;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -36,9 +37,16 @@ public class RefactoringTool {
         variableMap.put("a", "new_a");
         variableMap.put("b", "new_b");
         variableMap.put("c", "new_c");
+        // add verification so stupid user cant add '1' as a key
 
-        RenameVariableListener renamer = new RenameVariableListener(variableMap, tokens, "method1");
+        RenameVariableListener renamer = new RenameVariableListener(variableMap,
+                                                                    tokens,
+                                                    "method1");
         walker.walk(renamer,tree);
+
+        XPath.findAll(tree, "//expression", parser).forEach(ctx -> {
+            //System.out.println(ctx.getText());
+        });
 
         System.out.println(renamer.rewriter.getText());
         try {

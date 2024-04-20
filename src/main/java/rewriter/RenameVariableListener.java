@@ -25,12 +25,24 @@ public class RenameVariableListener extends JavaParserBaseListener {
     // (w dokumentacji jest opisane to obok siebie)
 
     @Override
-    public void enterVariableDeclaratorId(JavaParser.VariableDeclaratorIdContext ctx) {
-        String name = ctx.identifier().IDENTIFIER().getText();
+    public void enterVariableDeclarator(JavaParser.VariableDeclaratorContext ctx) {
+        String name = ctx.variableDeclaratorId().identifier().IDENTIFIER().getText();
         if (variableMap.containsKey(name)
                 && interesting != null
                 && interesting.equals(jakaMetodaWariacie)) {
-            rewriter.replace(ctx.identifier().IDENTIFIER().getSymbol(), variableMap.get(name));
+            rewriter.replace(ctx.variableDeclaratorId().identifier().IDENTIFIER().getSymbol(), variableMap.get(name));
+        }
+    }
+
+    @Override
+    public void enterExpression(JavaParser.ExpressionContext ctx) {
+        if (ctx.start == null) return;
+        var variableName = ctx.start.getText();
+        System.out.println(variableName);
+        if (variableMap.containsKey(variableName)
+                && interesting != null
+                && interesting.equals(jakaMetodaWariacie)) {
+            rewriter.replace(ctx.start, variableMap.get(variableName));
         }
     }
 
