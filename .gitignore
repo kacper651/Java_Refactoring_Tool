@@ -65,3 +65,6 @@ replay_pid*
 
 # ignore ANTLR generated files
 gen/
+
+#ignore output files
+Out.java
