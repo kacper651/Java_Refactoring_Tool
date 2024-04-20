@@ -5,10 +5,10 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.antlr.v4.runtime.tree.xpath.XPath;
 
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.*;
 
 public class RefactoringTool {
 
@@ -31,12 +31,14 @@ public class RefactoringTool {
         ParseTree tree = parser.compilationUnit();
         ParseTreeWalker walker = new ParseTreeWalker();
 
-        RenameVariableListener renamer = new RenameVariableListener(tokens);
-        walker.walk(renamer,tree);
+        // rename variables map
+        HashMap<String, String> variableMap = new HashMap<>();
+        variableMap.put("a", "new_a");
+        variableMap.put("b", "new_b");
+        variableMap.put("c", "new_c");
 
-        XPath.findAll(tree, "//variableDeclaratorId", parser).forEach(ctx -> {
-            System.out.println(ctx.getText());
-        });
+        RenameVariableListener renamer = new RenameVariableListener(variableMap, tokens, "method1");
+        walker.walk(renamer,tree);
 
         System.out.println(renamer.rewriter.getText());
         try {
