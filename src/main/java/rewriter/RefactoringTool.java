@@ -39,19 +39,20 @@ public class RefactoringTool {
         variableMap.put("c", "new_c");
         // add verification so stupid user cant add '1' as a key
 
-        RenameVariableListener renamer = new RenameVariableListener(variableMap,
-                                                                    tokens,
-                                                    "method1");
-        walker.walk(renamer,tree);
+//        RenameVariableListener renamer = new RenameVariableListener(variableMap,
+//                                                                    tokens,
+//                                                                    "method1");
+        RenameMethodListener methodRenamer = new RenameMethodListener(tokens,"method2");
+        walker.walk(methodRenamer,tree);
 
-        XPath.findAll(tree, "//expression", parser).forEach(ctx -> {
-            //System.out.println(ctx.getText());
-        });
+//        XPath.findAll(tree, "//expression", parser).forEach(ctx -> {
+//            //System.out.println(ctx.getText());
+//        });
 
-        System.out.println(renamer.rewriter.getText());
+        System.out.println(methodRenamer.rewriter.getText());
         try {
             var writer = new FileWriter("Out.java");
-            writer.write(renamer.rewriter.getText());
+            writer.write(methodRenamer.rewriter.getText());
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
