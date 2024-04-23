@@ -7,9 +7,11 @@ import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
 import org.antlr.v4.runtime.tree.xpath.XPath;
 
+import java.io.BufferedReader;
+import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.util.*;
+import java.util.HashMap;
 
 public class RefactoringTool {
 
@@ -34,10 +36,34 @@ public class RefactoringTool {
 
         // rename variables map
         HashMap<String, String> variableMap = new HashMap<>();
-        variableMap.put("a", "new_a");
-        variableMap.put("b", "new_b");
-        variableMap.put("c", "new_c");
-        // add verification so stupid user cant add '1' as a key
+        HashMap<String, String> methodMap = new HashMap<>();
+
+        String inputFile = "refactor_vars.txt";
+        String line;
+        String splitBy = ",";
+        int lineCounter = 0;
+
+        try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
+            while ((line = br.readLine()) != null) {
+
+                String[] data = line.split(splitBy);
+                lineCounter++;
+
+                if(isMadeOfDigits(data[1]) || isMadeOfDigits(data[2])){
+                    System.out.println("Warning line " + lineCounter + ": variable name cannot be digit");
+                    continue;
+                }
+
+                if (data.length == 3) {
+                    switch (data[0]){
+                        case "var" -> variableMap.put(data[1], data[2]);
+                        case "method" -> methodMap.put(data[1], data[2]);
+                    }
+                }
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
 
         RenameVariableListener renamer = new RenameVariableListener(variableMap,
                                                                     tokens,
@@ -56,5 +82,9 @@ public class RefactoringTool {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public static boolean isMadeOfDigits(String str) {
+        return str.matches("\\d+");
     }
 }
