@@ -7,7 +7,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RenameVariableListener extends JavaParserBaseListener {
-    public Map<String, String> variableMap = new HashMap<>();
+    public Map<String, String> variableMap;
     private final CommonTokenStream tokens;
     TokenStreamRewriter rewriter;
     String interesting = null;
