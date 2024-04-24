@@ -43,10 +43,12 @@ public class RefactoringTool {
         String line;
         String splitBy = ",";
         int lineCounter = 0;
+        String methodName = null;
 
         try (BufferedReader br = new BufferedReader(new FileReader(inputFile))) {
+            methodName = br.readLine();
+            lineCounter++;
             while ((line = br.readLine()) != null) {
-
                 String[] data = line.split(splitBy);
                 lineCounter++;
 
@@ -67,9 +69,7 @@ public class RefactoringTool {
             e.printStackTrace();
         }
 
-        RenameVariableListener renamer = new RenameVariableListener(variableMap,
-                                                                    tokens,
-                                                    "method1");
+        RenameVariableListener renamer = new RenameVariableListener(variableMap, tokens, methodName);
         walker.walk(renamer,tree);
 
         XPath.findAll(tree, "//expression", parser).forEach(ctx -> {
