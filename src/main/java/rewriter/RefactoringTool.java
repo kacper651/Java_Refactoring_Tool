@@ -37,6 +37,7 @@ public class RefactoringTool {
         // rename variables map
         HashMap<String, String> variableMap = new HashMap<>();
         HashMap<String, String> methodMap = new HashMap<>();
+        HashMap<String, String> classMap = new HashMap<>();
 
         String inputFile = "refactor_vars.txt";
         String line;
@@ -58,6 +59,7 @@ public class RefactoringTool {
                     switch (data[0]){
                         case "var" -> variableMap.put(data[1], data[2]);
                         case "method" -> methodMap.put(data[1], data[2]);
+                        case "class" -> classMap.put(data[1], data[2]);
                     }
                 }
             }
