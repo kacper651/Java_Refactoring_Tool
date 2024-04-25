@@ -11,6 +11,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -21,7 +22,6 @@ public class RefactoringTool {
         int choice;
         String inputPath = "";
         Scanner scanner = new Scanner(System.in);
-        Scanner scannerFiles = new Scanner(System.in);
         String inputDir = "src/main/java/input/";
         // read input file
         CharStream input = null;
@@ -72,6 +72,7 @@ public class RefactoringTool {
                 }
 
                 case 3 -> {
+                    lineCounter = 0;
                     // create lexer, parser, and parse tree
                     JavaLexer lexer = new JavaLexer(input);
                     CommonTokenStream tokens = new CommonTokenStream(lexer);
