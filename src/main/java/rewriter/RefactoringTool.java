@@ -47,11 +47,15 @@ public class RefactoringTool {
         classMap.put("d", "new_d");
         classMap.put("e", "new_e");
         classMap.put("f", "new_f");
+        classMap.put("g", "new_g");
+        classMap.put("h", "new_h");
+        classMap.put("i", "new_i");
+        classMap.put("j", "new_j");
 
         RenameVariableListener renamer = new RenameVariableListener(variableMap,
                                                                     tokens,
                                                     "method1");
-        RenameClassListener renamer2 = new RenameClassListener(classMap, tokens);
+        RenameClassListener renamer2 = new RenameClassListener(classMap, tokens, RenameType.INTERFACE);
         walker.walk(renamer2,tree);
 
         XPath.findAll(tree, "//expression", parser).forEach(ctx -> {
