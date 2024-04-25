@@ -35,7 +35,7 @@ public class RenameVariableListener extends JavaParserBaseListener {
     }
 
     @Override
-    public void enterExpression(JavaParser.ExpressionContext ctx) {
+    public void enterExpression(JavaParser.ExpressionContext ctx) { // zamienić na primary w expression
         if (ctx.start == null) return;
         var variableName = ctx.start.getText();
         if (variableMap.containsKey(variableName)
