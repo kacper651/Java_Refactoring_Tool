@@ -39,16 +39,31 @@ public class RefactoringTool {
         variableMap.put("c", "new_c");
         // add verification so stupid user cant add '1' as a key
 
+
+        HashMap<String, String> classMap = new HashMap<>();
+        classMap.put("a", "new_a");
+        classMap.put("b", "new_b");
+        classMap.put("c", "new_c");
+        classMap.put("d", "new_d");
+        classMap.put("e", "new_e");
+        classMap.put("f", "new_f");
+        classMap.put("g", "new_g");
+        classMap.put("h", "new_h");
+        classMap.put("i", "new_i");
+        classMap.put("j", "new_j");
+        classMap.put("xyz", "new_xyz");
+
         RenameVariableListener renamer = new RenameVariableListener(variableMap,
                                                                     tokens,
                                                     "method1");
-        walker.walk(renamer,tree);
+        RenameClassListener renamer2 = new RenameClassListener(classMap, tokens, RenameType.INTERFACE);
+        walker.walk(renamer2,tree);
 
         XPath.findAll(tree, "//expression", parser).forEach(ctx -> {
             //System.out.println(ctx.getText());
         });
 
-        System.out.println(renamer.rewriter.getText());
+        System.out.println(renamer2.rewriter.getText());
         try {
             var writer = new FileWriter("Out.java");
             writer.write(renamer.rewriter.getText());
