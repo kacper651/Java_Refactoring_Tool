@@ -3,20 +3,23 @@ package rewriter;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.TokenStreamRewriter;
 
+import java.util.HashMap;
+
 public class RenameMethodListener extends JavaParserBaseListener {
-    String methodName;
+    HashMap<String, String> methodNameMap;
     TokenStreamRewriter rewriter;
 
-    public RenameMethodListener(CommonTokenStream tokens,
-                                String methodName) {
+    public RenameMethodListener(HashMap<String, String> methodNameMap,
+                                CommonTokenStream tokens) {
         this.rewriter = new TokenStreamRewriter(tokens);
-        this.methodName = methodName;
+        this.methodNameMap = methodNameMap;
     }
 
     @Override
     public void enterMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
-        if (ctx.identifier().IDENTIFIER().getText().equals(methodName)) {
-            rewriter.replace(ctx.identifier().IDENTIFIER().getSymbol(), "new_" + methodName);
+        String name = ctx.identifier().IDENTIFIER().getText();
+        if (methodNameMap.containsKey(name)) {
+            rewriter.replace(ctx.identifier().IDENTIFIER().getSymbol(), methodNameMap.get(name));
         }
     }
 }
