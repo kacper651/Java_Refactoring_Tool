@@ -51,6 +51,7 @@ public class RefactoringTool {
         classMap.put("h", "new_h");
         classMap.put("i", "new_i");
         classMap.put("j", "new_j");
+        classMap.put("xyz", "new_xyz");
 
         RenameVariableListener renamer = new RenameVariableListener(variableMap,
                                                                     tokens,
