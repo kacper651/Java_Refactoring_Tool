@@ -47,7 +47,7 @@ public class RefactoringTool {
 //                                                                    tokens,
 //                                                                    "method1");
         RenameMethodListener methodRenamer = new RenameMethodListener(methodNameMap,
-                                                                        tokens);
+                                                                        tokens, true );
         walker.walk(methodRenamer,tree);
         RenameVariableListener renamer = new RenameVariableListener(variableMap,
                                                                     tokens,
