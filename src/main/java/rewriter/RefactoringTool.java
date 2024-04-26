@@ -5,7 +5,6 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.antlr.v4.runtime.tree.xpath.XPath;
 
 import java.io.FileWriter;
 import java.io.IOException;
@@ -39,6 +38,17 @@ public class RefactoringTool {
         variableMap.put("c", "new_c");
         // add verification so stupid user cant add '1' as a key
 
+        // rename method map
+        HashMap<String, String> methodNameMap = new HashMap<>();
+        methodNameMap.put("method1", "new_method1");
+        methodNameMap.put("method2", "new_method2");
+
+//        RenameVariableListener renamer = new RenameVariableListener(variableMap,
+//                                                                    tokens,
+//                                                                    "method1");
+        RenameMethodListener methodRenamer = new RenameMethodListener(methodNameMap,
+                                                                        tokens);
+        walker.walk(methodRenamer,tree);
         RenameVariableListener renamer = new RenameVariableListener(variableMap,
                                                                     tokens,
                                                     "method1");
@@ -48,10 +58,10 @@ public class RefactoringTool {
 //            //System.out.println(ctx.getText());
 //        });
 
-        System.out.println(renamer.rewriter.getText());
+        System.out.println(methodRenamer.rewriter.getText());
         try {
             var writer = new FileWriter("Out.java");
-            writer.write(renamer.rewriter.getText());
+            writer.write(methodRenamer.rewriter.getText());
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
