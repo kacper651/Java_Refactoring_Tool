@@ -7,12 +7,12 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class RenameClassListener extends JavaParserBaseListener{
+public class RenameClassOrInterfaceListener extends JavaParserBaseListener{
     public Map<String, String> classOrInterfaceMap;
     TokenStreamRewriter rewriter;
     RenameType renameType;
 
-    public RenameClassListener(HashMap<String, String> classMap, CommonTokenStream tokens, RenameType type){
+    public RenameClassOrInterfaceListener(HashMap<String, String> classMap, CommonTokenStream tokens, RenameType type){
         this.classOrInterfaceMap = classMap;
         this.rewriter = new TokenStreamRewriter(tokens);
         this.renameType = type;
