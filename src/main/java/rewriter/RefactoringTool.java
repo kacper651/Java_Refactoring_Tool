@@ -30,7 +30,8 @@ public class RefactoringTool {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-
+        
+        HashMap<String, String> variableMap = new HashMap<>();
          // rename method map
         HashMap<String, String> methodNameMap = new HashMap<>();
         methodNameMap.put("method1", "new_method1");
@@ -101,7 +102,7 @@ public class RefactoringTool {
                             if (data.length == 3) {
                                 switch (data[0]){
                                     case "var" -> variableMap.put(data[1], data[2]);
-                                    case "method" -> methodMap.put(data[1], data[2]);
+                                    case "method" -> methodNameMap.put(data[1], data[2]);
                                     case "class" -> classMap.put(data[1], data[2]);
                                 }
                             }
