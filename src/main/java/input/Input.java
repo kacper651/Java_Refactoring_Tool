@@ -39,4 +39,7 @@ public class Input {
         method2();
         method3();
     }
+
+    class mkj {}
+    interface xyz {}
 }

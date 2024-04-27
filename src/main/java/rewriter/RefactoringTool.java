@@ -32,15 +32,10 @@ public class RefactoringTool {
         }
         
         HashMap<String, String> variableMap = new HashMap<>();
-         // rename method map
         HashMap<String, String> methodNameMap = new HashMap<>();
-        methodNameMap.put("method1", "new_method1");
-        methodNameMap.put("method2", "new_method2");
-
-        // rename method parameters map
         HashMap<String, String> parameterMap = new HashMap<>();
-        parameterMap.put("int x", "Integer x");
-        parameterMap.put("int y", "Integer y");
+        HashMap<String, String> classMap = new HashMap<>();
+
 
         String configFile = "refactor_vars.txt";
         String line;
@@ -104,6 +99,7 @@ public class RefactoringTool {
                                     case "var" -> variableMap.put(data[1], data[2]);
                                     case "method" -> methodNameMap.put(data[1], data[2]);
                                     case "class" -> classMap.put(data[1], data[2]);
+                                    case "param" -> parameterMap.put(data[1], data[2]);
                                 }
                             }
                         }
@@ -118,11 +114,8 @@ public class RefactoringTool {
 //                                                                                    tokens,
 //                                                                                    "method1",
 //                                                                                    OpType.ADD);
-                    walker.walk(renamer,tree);
-
-                    XPath.findAll(tree, "//expression", parser).forEach(ctx -> {
-                        //System.out.println(ctx.getText());
-                    });
+                    RenameClassOrInterfaceListener renamerClass = new RenameClassOrInterfaceListener(classMap, tokens, RenameType.CLASS);
+                    walker.walk(renamerClass,tree);
 
                     System.out.println(renamer.rewriter.getText());
                     System.out.println("Wynik zapisano w pliku Out.java");
