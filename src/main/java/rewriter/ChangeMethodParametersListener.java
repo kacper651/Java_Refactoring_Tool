@@ -5,10 +5,6 @@ import org.antlr.v4.runtime.TokenStreamRewriter;
 
 import java.util.HashMap;
 
-enum OpType {
-    ADD, REMOVE, CHANGE
-}
-
 public class ChangeMethodParametersListener extends JavaParserBaseListener {
     HashMap<String, String> parameterMap;
     TokenStreamRewriter rewriter;
