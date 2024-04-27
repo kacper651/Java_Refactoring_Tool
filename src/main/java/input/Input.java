@@ -11,15 +11,14 @@ public class Input {
         int a = 1;
         int b = 2;
         int c = 3;
-        this.x = 100;
     }
 
     // sample methods which will contain a bunch of varialbes for xpath to map
-    public void method1new(Integer x, int y) {
-        String new_a = " a ";
-        new_a = "b";
-        int new_b = 2;
-        int new_c = 3;
+    public void method1(int x, int y) {
+        String a = " a ";
+        a = "b";
+        int b = 2;
+        int c = 3;
     }
 
     public void method2() {
@@ -36,11 +35,11 @@ public class Input {
 
     // sample methods invoking other methods
     public void method4() {
-        method1new(1, 2);
+        method1(1, 2);
         method2();
         method3();
     }
 
-    class new_b {}
-    interface new_xyz {}
+    class b {}
+    interface xyz {}
 }
