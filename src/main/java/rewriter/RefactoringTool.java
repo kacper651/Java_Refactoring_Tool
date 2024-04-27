@@ -43,21 +43,32 @@ public class RefactoringTool {
         methodNameMap.put("method1", "new_method1");
         methodNameMap.put("method2", "new_method2");
 
+        // rename method parameters map
+        HashMap<String, String> parameterMap = new HashMap<>();
+        parameterMap.put("int x", "Integer x");
+        parameterMap.put("int y", "Integer y");
+
+
 //        RenameVariableListener renamer = new RenameVariableListener(variableMap,
 //                                                                    tokens,
 //                                                                    "method1");
-        RenameMethodListener methodRenamer = new RenameMethodListener(methodNameMap,
-                                                                        tokens, true );
-        walker.walk(methodRenamer,tree);
+//        RenameMethodListener renamer = new RenameMethodListener(methodNameMap,
+//                                                                        tokens);
+        ChangeMethodParametersListener renamer = new ChangeMethodParametersListener(parameterMap,
+                                                                                    tokens,
+                                                                                    "method1",
+                                                                                    OpType.CHANGE);
+
+        walker.walk(renamer,tree);
 
 //        XPath.findAll(tree, "//expression", parser).forEach(ctx -> {
 //            //System.out.println(ctx.getText());
 //        });
 
-        System.out.println(methodRenamer.rewriter.getText());
+        System.out.println(renamer.rewriter.getText());
         try {
             var writer = new FileWriter("Out.java");
-            writer.write(methodRenamer.rewriter.getText());
+            writer.write(renamer.rewriter.getText());
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
