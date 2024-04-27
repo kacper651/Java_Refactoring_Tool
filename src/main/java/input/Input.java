@@ -32,4 +32,11 @@ public class Input {
         int h = 8;
         int i = 9;
     }
+
+    // sample methods invoking other methods
+    public void method4() {
+        method1(1, 2);
+        method2();
+        method3();
+    }
 }
