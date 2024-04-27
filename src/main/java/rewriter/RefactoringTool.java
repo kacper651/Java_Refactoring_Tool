@@ -52,12 +52,12 @@ public class RefactoringTool {
 //        RenameVariableListener renamer = new RenameVariableListener(variableMap,
 //                                                                    tokens,
 //                                                                    "method1");
-//        RenameMethodListener renamer = new RenameMethodListener(methodNameMap,
-//                                                                        tokens);
-        ChangeMethodParametersListener renamer = new ChangeMethodParametersListener(parameterMap,
-                                                                                    tokens,
-                                                                                    "method1",
-                                                                                    OpType.ADD);
+        RenameMethodListener renamer = new RenameMethodListener(methodNameMap,
+                                                                        tokens);
+//        ChangeMethodParametersListener renamer = new ChangeMethodParametersListener(parameterMap,
+//                                                                                    tokens,
+//                                                                                    "method1",
+//                                                                                    OpType.ADD);
 
         walker.walk(renamer,tree);
 
