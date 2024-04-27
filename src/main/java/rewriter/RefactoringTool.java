@@ -57,7 +57,7 @@ public class RefactoringTool {
         ChangeMethodParametersListener renamer = new ChangeMethodParametersListener(parameterMap,
                                                                                     tokens,
                                                                                     "method1",
-                                                                                    OpType.CHANGE);
+                                                                                    OpType.ADD);
 
         walker.walk(renamer,tree);
 
