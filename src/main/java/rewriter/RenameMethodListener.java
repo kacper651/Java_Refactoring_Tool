@@ -17,17 +17,23 @@ public class RenameMethodListener extends JavaParserBaseListener {
 
     @Override
     public void enterMethodDeclaration(JavaParser.MethodDeclarationContext ctx) {
-        String name = ctx.identifier().IDENTIFIER().getText();
-        if (methodNameMap.containsKey(name)) {
-            rewriter.replace(ctx.identifier().IDENTIFIER().getSymbol(), methodNameMap.get(name));
+        String methodName = ctx.identifier().IDENTIFIER().getText();
+        if (methodNameMap.containsKey(methodName)) {
+            rewriter.replace(
+                    ctx.identifier().IDENTIFIER().getSymbol(),
+                    methodNameMap.get(methodName)
+            );
         }
     }
 
     @Override
     public void enterMethodCall(JavaParser.MethodCallContext ctx) {
-        String name = ctx.identifier().IDENTIFIER().getText();
-        if (methodNameMap.containsKey(name)) {
-            rewriter.replace(ctx.identifier().IDENTIFIER().getSymbol(), methodNameMap.get(name));
+        String methodName = ctx.identifier().IDENTIFIER().getText();
+        if (methodNameMap.containsKey(methodName)) {
+            rewriter.replace(
+                    ctx.identifier().IDENTIFIER().getSymbol(),
+                    methodNameMap.get(methodName)
+            );
         }
     }
 }
