@@ -14,7 +14,7 @@ public class Input {
     }
 
     // sample methods which will contain a bunch of varialbes for xpath to map
-    public void method1() {
+    public void method1(int x, int y) {
         String a = " a ";
         a = "b";
         int b = 2;
@@ -31,5 +31,12 @@ public class Input {
         int g = 7;
         int h = 8;
         int i = 9;
+    }
+
+    // sample methods invoking other methods
+    public void method4() {
+        method1(1, 2);
+        method2();
+        method3();
     }
 }

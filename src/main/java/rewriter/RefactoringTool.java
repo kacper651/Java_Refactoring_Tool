@@ -5,7 +5,6 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.antlr.v4.runtime.tree.xpath.XPath;
 
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -32,10 +31,15 @@ public class RefactoringTool {
             throw new RuntimeException(e);
         }
 
-        // rename variables map
-        HashMap<String, String> variableMap = new HashMap<>();
-        HashMap<String, String> methodMap = new HashMap<>();
-        HashMap<String, String> classMap = new HashMap<>();
+         // rename method map
+        HashMap<String, String> methodNameMap = new HashMap<>();
+        methodNameMap.put("method1", "new_method1");
+        methodNameMap.put("method2", "new_method2");
+
+        // rename method parameters map
+        HashMap<String, String> parameterMap = new HashMap<>();
+        parameterMap.put("int x", "Integer x");
+        parameterMap.put("int y", "Integer y");
 
         String configFile = "refactor_vars.txt";
         String line;
@@ -107,6 +111,12 @@ public class RefactoringTool {
                     }
 
                     RenameVariableListener renamer = new RenameVariableListener(variableMap, tokens, methodName);
+                  //RenameMethodListener renamer = new RenameMethodListener(methodNameMap,
+  //                                                                      tokens);
+//                  ChangeMethodParametersListener renamer = new ChangeMethodParametersListener(parameterMap,
+//                                                                                    tokens,
+//                                                                                    "method1",
+//                                                                                    OpType.ADD);
                     walker.walk(renamer,tree);
 
                     XPath.findAll(tree, "//expression", parser).forEach(ctx -> {
