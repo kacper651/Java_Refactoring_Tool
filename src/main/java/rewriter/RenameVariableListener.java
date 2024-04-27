@@ -7,17 +7,17 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class RenameVariableListener extends JavaParserBaseListener {
-    public Map<String, String> variableMap = new HashMap<>();
-    private final CommonTokenStream tokens;
+    public Map<String, String> variableMap;
     TokenStreamRewriter rewriter;
     String interesting = null;
-    String jakaMetodaWariacie;
+    String methodName;
 
-    public RenameVariableListener(HashMap<String, String> variableMap, CommonTokenStream tokens, String jakaMetodaWariacie) {
+    public RenameVariableListener(HashMap<String, String> variableMap,
+                                  CommonTokenStream tokens,
+                                  String methodName) {
         this.variableMap = variableMap;
-        this.tokens = tokens;
         this.rewriter = new TokenStreamRewriter(tokens);
-        this.jakaMetodaWariacie = jakaMetodaWariacie;
+        this.methodName = methodName;
     }
 
     // w jakiej funkcji jaka zmienna / xpath do szukania nazwy funkcji / trzeba przechowywac id funkcji
@@ -29,19 +29,18 @@ public class RenameVariableListener extends JavaParserBaseListener {
         String name = ctx.variableDeclaratorId().identifier().IDENTIFIER().getText();
         if (variableMap.containsKey(name)
                 && interesting != null
-                && interesting.equals(jakaMetodaWariacie)) {
+                && interesting.equals(methodName)) {
             rewriter.replace(ctx.variableDeclaratorId().identifier().IDENTIFIER().getSymbol(), variableMap.get(name));
         }
     }
 
     @Override
-    public void enterExpression(JavaParser.ExpressionContext ctx) {
+    public void enterExpression(JavaParser.ExpressionContext ctx) { // zamienić na primary w expression
         if (ctx.start == null) return;
         var variableName = ctx.start.getText();
-        System.out.println(variableName);
         if (variableMap.containsKey(variableName)
                 && interesting != null
-                && interesting.equals(jakaMetodaWariacie)) {
+                && interesting.equals(methodName)) {
             rewriter.replace(ctx.start, variableMap.get(variableName));
         }
     }
