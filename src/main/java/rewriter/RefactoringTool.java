@@ -5,12 +5,10 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
+import org.antlr.v4.runtime.tree.xpath.XPath;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.util.Arrays;
+import java.io.*;
+import java.nio.file.NoSuchFileException;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -32,21 +30,27 @@ public class RefactoringTool {
         }
         
         HashMap<String, String> variableMap = new HashMap<>();
-         // rename method map
         HashMap<String, String> methodNameMap = new HashMap<>();
-        methodNameMap.put("method1", "new_method1");
-        methodNameMap.put("method2", "new_method2");
-
-        // rename method parameters map
         HashMap<String, String> parameterMap = new HashMap<>();
-        parameterMap.put("int x", "Integer x");
-        parameterMap.put("int y", "Integer y");
+        HashMap<String, String> classOrInterfaceMap = new HashMap<>();
 
-        String configFile = "refactor_vars.txt";
+
+        String configFile = "refactor_config.txt";
         String line;
         String splitBy = ",";
         int lineCounter = 0;
         String methodName = null;
+        RenameType renameType = RenameType.CLASS;
+        OpType opType = OpType.CHANGE;
+
+        // create lexer, parser, and parse tree
+        JavaLexer lexer = new JavaLexer(input);
+        CommonTokenStream tokens = new CommonTokenStream(lexer);
+        JavaParser parser = new JavaParser(tokens);
+
+        // create walker and listener
+        ParseTree tree = parser.compilationUnit();
+        ParseTreeWalker walker = new ParseTreeWalker();
 
         while(shouldContinue){
             System.out.println("Plik wejściowy: " + inputPath);
@@ -67,7 +71,10 @@ public class RefactoringTool {
                         System.out.println("Podaj nazwę pliku z katalogu src/main/java/input/: ");
                         String newFile = scanner.nextLine();
                         input = CharStreams.fromFileName(inputDir + newFile);
-                    } catch (IOException e) {
+                    } catch (NoSuchFileException e){
+                        System.out.println("Nie znaleziono pliku");
+                    }
+                    catch (IOException e) {
                         throw new RuntimeException(e);
                     }
                 }
@@ -78,24 +85,20 @@ public class RefactoringTool {
 
                 case 3 -> {
                     lineCounter = 0;
-                    // create lexer, parser, and parse tree
-                    JavaLexer lexer = new JavaLexer(input);
-                    CommonTokenStream tokens = new CommonTokenStream(lexer);
-                    JavaParser parser = new JavaParser(tokens);
-
-                    // create walker and listener
-                    ParseTree tree = parser.compilationUnit();
-                    ParseTreeWalker walker = new ParseTreeWalker();
 
                     try (BufferedReader br = new BufferedReader(new FileReader(configFile))) {
-                        methodName = br.readLine();
+                        String[] options = br.readLine().split(splitBy);
+                        methodName = options[0];
+                        renameType = RenameType.valueOf(options[1]);
+                        opType = OpType.valueOf(options[2]);
+
                         lineCounter++;
                         while ((line = br.readLine()) != null) {
                             String[] data = line.split(splitBy);
                             lineCounter++;
 
                             if(isMadeOfDigits(data[1]) || isMadeOfDigits(data[2])){
-                                System.out.println("Warning line " + lineCounter + ": variable name cannot be digit");
+                                System.out.println("Uwaga linia " + lineCounter + ": zmienna nie może być liczbą");
                                 continue;
                             }
 
@@ -103,35 +106,36 @@ public class RefactoringTool {
                                 switch (data[0]){
                                     case "var" -> variableMap.put(data[1], data[2]);
                                     case "method" -> methodNameMap.put(data[1], data[2]);
-                                    case "class" -> classMap.put(data[1], data[2]);
+                                    case "class" -> classOrInterfaceMap.put(data[1], data[2]);
+                                    case "param" -> parameterMap.put(data[1], data[2]);
                                 }
                             }
                         }
-                    } catch (IOException e) {
-                        e.printStackTrace();
+
+
+                        RenameListener renameListener = new RenameListener(variableMap, methodNameMap,
+                                                                            parameterMap, classOrInterfaceMap,
+                                                                            tokens, methodName,
+                                                                            renameType, opType);
+
+                        walker.walk(renameListener, tree);
+
+                        XPath.findAll(tree, "//expression", parser).forEach(ctx -> {
+                            System.out.println(ctx.getText());
+                        });
+
+                        try (FileWriter writer = new FileWriter(inputPath)){
+                            writer.write(renameListener.rewriter.getText());
+                            //System.out.println(renamerParam.rewriter.getText());
+                            System.out.println("Zapisano zmiany w pliku: " +  inputPath);
+                        } catch (IOException e) {
+                            throw new RuntimeException(e);
+                        }
+                    } catch (FileNotFoundException e){
+                        System.out.println("Nie znaleziono pliku " + configFile);
                     }
-
-                    RenameVariableListener renamer = new RenameVariableListener(variableMap, tokens, methodName);
-                  //RenameMethodListener renamer = new RenameMethodListener(methodNameMap,
-  //                                                                      tokens);
-//                  ChangeMethodParametersListener renamer = new ChangeMethodParametersListener(parameterMap,
-//                                                                                    tokens,
-//                                                                                    "method1",
-//                                                                                    OpType.ADD);
-                    walker.walk(renamer,tree);
-
-                    XPath.findAll(tree, "//expression", parser).forEach(ctx -> {
-                        //System.out.println(ctx.getText());
-                    });
-
-                    System.out.println(renamer.rewriter.getText());
-                    System.out.println("Wynik zapisano w pliku Out.java");
-                    try {
-                        var writer = new FileWriter("Out.java");
-                        writer.write(renamer.rewriter.getText());
-                        writer.close();
-                    } catch (IOException e) {
-                        throw new RuntimeException(e);
+                    catch (IOException e) {
+                        e.printStackTrace();
                     }
                 }
             }
