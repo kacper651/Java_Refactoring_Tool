@@ -53,20 +53,21 @@ public class RefactoringTool {
         classMap.put("j", "new_j");
         classMap.put("xyz", "new_xyz");
 
-        RenameVariableListener renamer = new RenameVariableListener(variableMap,
+        RenameLocalVariableListener renamer = new RenameLocalVariableListener(variableMap,
                                                                     tokens,
                                                     "method1");
         RenameClassListener renamer2 = new RenameClassListener(classMap, tokens, RenameType.INTERFACE);
-        walker.walk(renamer2,tree);
+        RenameClassFieldListener renamer3 = new RenameClassFieldListener(classMap, tokens, "a");
+        walker.walk(renamer3,tree);
 
         XPath.findAll(tree, "//expression", parser).forEach(ctx -> {
             //System.out.println(ctx.getText());
         });
 
-        System.out.println(renamer2.rewriter.getText());
+        System.out.println(renamer3.rewriter.getText());
         try {
             var writer = new FileWriter("Out.java");
-            writer.write(renamer.rewriter.getText());
+            writer.write(renamer3.rewriter.getText());
             writer.close();
         } catch (IOException e) {
             throw new RuntimeException(e);
