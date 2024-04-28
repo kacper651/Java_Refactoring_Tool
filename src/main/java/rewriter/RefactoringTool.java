@@ -113,7 +113,7 @@ public class RefactoringTool {
                         }
 
 
-                        RenameListener renameListener = new RenameListener(variableMap, methodNameMap,
+                        JavaParserBaseListener renameListener = new RenameListener(variableMap, methodNameMap,
                                                                             parameterMap, classOrInterfaceMap,
                                                                             tokens, methodName,
                                                                             renameType, opType);
