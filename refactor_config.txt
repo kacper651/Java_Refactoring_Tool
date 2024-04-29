@@ -10,3 +10,4 @@ method,method1,method1new
 class,Input,new_Input
 classField,y,new_y
 interface,IInput,new_IInput
+interface,ISecondInput,new_ISecondInput

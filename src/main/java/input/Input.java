@@ -4,11 +4,13 @@ interface IInput {
     void method1(int x, int y);
     void method2();
     void method3();
-    void method4();
-
 }
+interface ISecondInput {
+    void method4();
+}
+interface IThirdInput { }
 
-public class Input implements IInput {
+public class Input implements IInput, ISecondInput, IThirdInput {
     // sample class fields
     private int x = 1;
     private int y = 2;
