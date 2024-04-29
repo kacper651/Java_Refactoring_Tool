@@ -5,7 +5,7 @@ import org.antlr.v4.runtime.TokenStreamRewriter;
 
 import java.util.HashMap;
 
-public class ChangeMethodParametersListener extends JavaParserBaseListener {
+public class ChangeMethodParametersListener extends BaseRenameListener {
     HashMap<String, String> parameterMap;
     String interesting = null;
     String methodName;
@@ -45,9 +45,9 @@ public class ChangeMethodParametersListener extends JavaParserBaseListener {
                                 .typeType()
                                 .getText()
                                 + " " + ctx.formalParameterList()
-                                        .formalParameter(i)
-                                        .variableDeclaratorId()
-                                        .getText();
+                                .formalParameter(i)
+                                .variableDeclaratorId()
+                                .getText();
                         if (paramName.equals(key)) {
                             rewriter.replace(
                                     ctx.formalParameterList().formalParameter(i).start,

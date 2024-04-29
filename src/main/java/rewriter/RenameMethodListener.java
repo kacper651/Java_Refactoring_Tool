@@ -5,7 +5,7 @@ import org.antlr.v4.runtime.TokenStreamRewriter;
 
 import java.util.HashMap;
 
-public class RenameMethodListener extends JavaParserBaseListener {
+public class RenameMethodListener extends BaseRenameListener {
     HashMap<String, String> methodNameMap;
 
     public RenameMethodListener(HashMap<String, String> methodNameMap,

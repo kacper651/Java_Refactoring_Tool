@@ -9,7 +9,7 @@ import java.util.Stack;
 
 //  this listener works on the basis of an assumption, that no local variable
 //  will have the same name as a class field
-public class RenameClassFieldListener extends JavaParserBaseListener{
+public class RenameClassFieldListener extends BaseRenameListener {
 
     private final Map<String, String> classFieldMap;
     private final String classScope;
@@ -24,7 +24,7 @@ public class RenameClassFieldListener extends JavaParserBaseListener{
     private final Stack<String> currentClassStack = new Stack<>();
 
 
-    public RenameClassFieldListener(Map<String, String> classFieldMap, CommonTokenStream tokens, String classScope){
+    public RenameClassFieldListener(Map<String, String> classFieldMap, CommonTokenStream tokens, String classScope) {
         super(tokens);
         this.classFieldMap = classFieldMap;
         this.classScope = classScope;
@@ -40,11 +40,11 @@ public class RenameClassFieldListener extends JavaParserBaseListener{
     public void enterFieldDeclaration(JavaParser.FieldDeclarationContext ctx) {
         if (!currentClassStack.isEmpty() &&
                 currentClassStack.peek().equals(classScope) &&
-                ctx.variableDeclarators().variableDeclarator() != null){
-            for (var variableDeclarator : ctx.variableDeclarators().variableDeclarator()){
+                ctx.variableDeclarators().variableDeclarator() != null) {
+            for (var variableDeclarator : ctx.variableDeclarators().variableDeclarator()) {
                 String name = variableDeclarator.variableDeclaratorId().identifier().IDENTIFIER().getText();
-                if (name != null){
-                    if (classFieldMap.containsKey(name)){
+                if (name != null) {
+                    if (classFieldMap.containsKey(name)) {
                         foundClassFieldsSet.add(name);
                         rewriter.replace(variableDeclarator.variableDeclaratorId().identifier().IDENTIFIER().getSymbol(),
                                 classFieldMap.get(name));
@@ -55,23 +55,23 @@ public class RenameClassFieldListener extends JavaParserBaseListener{
     }
 
     @Override
-    public void enterConstructorDeclaration(JavaParser.ConstructorDeclarationContext ctx){
+    public void enterConstructorDeclaration(JavaParser.ConstructorDeclarationContext ctx) {
         if (!currentClassStack.isEmpty() &&
                 currentClassStack.peek().equals(classScope) &&
-                ctx.block().blockStatement() != null){
-            for (var blockStatementElem : ctx.block().blockStatement()){
-                if (blockStatementElem.statement().expression() != null){
+                ctx.block().blockStatement() != null) {
+            for (var blockStatementElem : ctx.block().blockStatement()) {
+                if (blockStatementElem.statement().expression() != null) {
 
-                    for (var expressionElem : blockStatementElem.statement().expression()){
-                        if (expressionElem.expression() != null){
+                    for (var expressionElem : blockStatementElem.statement().expression()) {
+                        if (expressionElem.expression() != null) {
 
-                            for (var innerExpression : expressionElem.expression()){
+                            for (var innerExpression : expressionElem.expression()) {
                                 if (innerExpression.expression() != null
-                                    && innerExpression.identifier() != null){
-                                        String name = innerExpression.identifier().IDENTIFIER().getText();
-                                        foundClassFieldsSet.add(name);
-                                        rewriter.replace(innerExpression.identifier().IDENTIFIER().getSymbol(),
-                                                classFieldMap.get(name));
+                                        && innerExpression.identifier() != null) {
+                                    String name = innerExpression.identifier().IDENTIFIER().getText();
+                                    foundClassFieldsSet.add(name);
+                                    rewriter.replace(innerExpression.identifier().IDENTIFIER().getSymbol(),
+                                            classFieldMap.get(name));
                                 }
                             }
                         }
@@ -83,12 +83,12 @@ public class RenameClassFieldListener extends JavaParserBaseListener{
 
     @Override
     public void enterFormalParameter(JavaParser.FormalParameterContext ctx) {
-        if (ctx.variableDeclaratorId() != null && ctx.variableDeclaratorId().identifier() != null){
+        if (ctx.variableDeclaratorId() != null && ctx.variableDeclaratorId().identifier() != null) {
             String name = ctx.variableDeclaratorId().identifier().IDENTIFIER().getText();
             if (classFieldMap.containsKey(name) &&
                     !currentClassStack.isEmpty() &&
                     currentClassStack.peek().equals(classScope) &&
-                    foundClassFieldsSet.contains(name)){
+                    foundClassFieldsSet.contains(name)) {
                 rewriter.replace(ctx.variableDeclaratorId().identifier().IDENTIFIER().getSymbol(),
                         classFieldMap.get(name));
             }

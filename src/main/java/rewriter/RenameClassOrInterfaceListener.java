@@ -7,11 +7,11 @@ import java.util.HashMap;
 import java.util.Map;
 
 
-public class RenameClassOrInterfaceListener extends JavaParserBaseListener{
+public class RenameClassOrInterfaceListener extends BaseRenameListener {
     public Map<String, String> classOrInterfaceMap;
     RenameType renameType;
 
-    public RenameClassOrInterfaceListener(HashMap<String, String> classMap, CommonTokenStream tokens, RenameType type){
+    public RenameClassOrInterfaceListener(HashMap<String, String> classMap, CommonTokenStream tokens, RenameType type) {
         super(tokens);
         this.classOrInterfaceMap = classMap;
         this.renameType = type;
@@ -23,25 +23,25 @@ public class RenameClassOrInterfaceListener extends JavaParserBaseListener{
         String extendsSomeClass = ctx.EXTENDS() != null ? ctx.EXTENDS().getText() : null;
         String implementsSomeInterfaces = ctx.EXTENDS() != null ? ctx.EXTENDS().getText() : null;
 
-        if (classOrInterfaceMap.containsKey(name) && renameType == RenameType.CLASS){
+        if (classOrInterfaceMap.containsKey(name) && renameType == RenameType.CLASS) {
             rewriter.replace(ctx.identifier().IDENTIFIER().getSymbol(), classOrInterfaceMap.get(name));
         }
-        if (extendsSomeClass != null && renameType == RenameType.CLASS){
+        if (extendsSomeClass != null && renameType == RenameType.CLASS) {
             String baseClassName = ctx
                     .typeType()
                     .classOrInterfaceType()
                     .typeIdentifier()
                     .IDENTIFIER()
                     .getText();
-            if (classOrInterfaceMap.containsKey(baseClassName)){
+            if (classOrInterfaceMap.containsKey(baseClassName)) {
                 rewriter.replace(ctx.typeType().classOrInterfaceType().typeIdentifier().IDENTIFIER().getSymbol(), classOrInterfaceMap.get(baseClassName));
             }
         }
-        if (implementsSomeInterfaces != null && renameType == RenameType.INTERFACE){
-            for (var typeListElem : ctx.typeList()){
-                for (var typeTypeContext : typeListElem.typeType()){
+        if (implementsSomeInterfaces != null && renameType == RenameType.INTERFACE) {
+            for (var typeListElem : ctx.typeList()) {
+                for (var typeTypeContext : typeListElem.typeType()) {
                     String interfaceName = typeTypeContext.classOrInterfaceType().typeIdentifier().IDENTIFIER().getText();
-                    if (classOrInterfaceMap.containsKey(interfaceName)){
+                    if (classOrInterfaceMap.containsKey(interfaceName)) {
                         rewriter.replace(typeTypeContext.classOrInterfaceType().typeIdentifier().IDENTIFIER().getSymbol(), classOrInterfaceMap.get(interfaceName));
                     }
                 }
@@ -55,10 +55,10 @@ public class RenameClassOrInterfaceListener extends JavaParserBaseListener{
         String name = ctx.identifier().IDENTIFIER().getText();
         String extendsSomeInterfaces = ctx.EXTENDS() != null ? ctx.EXTENDS().getText() : null;
 
-        if (classOrInterfaceMap.containsKey(name) && renameType == RenameType.INTERFACE){
+        if (classOrInterfaceMap.containsKey(name) && renameType == RenameType.INTERFACE) {
             rewriter.replace(ctx.identifier().IDENTIFIER().getSymbol(), classOrInterfaceMap.get(name));
         }
-        if (extendsSomeInterfaces != null && renameType == RenameType.INTERFACE){
+        if (extendsSomeInterfaces != null && renameType == RenameType.INTERFACE) {
             for (var typeListElem : ctx.typeList()) {
                 for (var typeTypeContext : typeListElem.typeType()) {
                     String interfaceName = typeTypeContext.classOrInterfaceType().typeIdentifier().IDENTIFIER().getText();

@@ -6,7 +6,7 @@ import org.antlr.v4.runtime.TokenStreamRewriter;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RenameLocalVariableListener extends JavaParserBaseListener {
+public class RenameLocalVariableListener extends BaseRenameListener {
     public Map<String, String> variableMap = new HashMap<>();
     String interesting = null;
     String methodScope;
