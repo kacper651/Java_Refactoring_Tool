@@ -1,4 +1,4 @@
-method1,INTERFACE,CHANGE
+method1,CLASS,CHANGE,Input
 param,int x,Integer x
 var,x,new_x
 var,a,new_a
@@ -7,4 +7,5 @@ var,2,new_de
 var,c,new_c
 var,1,new_d
 method,method1,method1new
-class,xyz,new_xyz
+class,Input,new_Input
+classField,y,new_y
