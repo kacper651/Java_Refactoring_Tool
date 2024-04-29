@@ -28,7 +28,7 @@ public class RefactoringTool {
             throw new RuntimeException(e);
         }
 
-        JavaParserBaseListener renameListener = null;
+        BaseRenameListener renameListener = null;
         HashMap<String, String> variableMap = new HashMap<>();
         HashMap<String, String> methodNameMap = new HashMap<>();
         HashMap<String, String> parameterMap = new HashMap<>();
