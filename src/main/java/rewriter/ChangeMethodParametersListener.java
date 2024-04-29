@@ -7,7 +7,6 @@ import java.util.HashMap;
 
 public class ChangeMethodParametersListener extends JavaParserBaseListener {
     HashMap<String, String> parameterMap;
-    TokenStreamRewriter rewriter;
     String interesting = null;
     String methodName;
     OpType opType;
@@ -16,8 +15,8 @@ public class ChangeMethodParametersListener extends JavaParserBaseListener {
                                           CommonTokenStream tokens,
                                           String methodName,
                                           OpType opType) {
+        super(tokens);
         this.parameterMap = parameterMap;
-        this.rewriter = new TokenStreamRewriter(tokens);
         this.methodName = methodName;
         this.opType = opType;
     }

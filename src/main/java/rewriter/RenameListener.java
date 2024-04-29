@@ -8,7 +8,6 @@ import java.util.Map;
 public class RenameListener extends JavaParserBaseListener{
     public Map<String, String> variableMap;
     HashMap<String, String> parameterMap;
-    TokenStreamRewriter rewriter;
     String interesting = null;
     String methodName;
     OpType opType;
@@ -25,8 +24,8 @@ public class RenameListener extends JavaParserBaseListener{
                           String methodName,
                           RenameType type,
                           OpType opType) {
+        super(tokens);
         this.variableMap = variableMap;
-        this.rewriter = new TokenStreamRewriter(tokens);
         this.classOrInterfaceMap = classOrInterfaceMap;
         this.renameType = type;
         this.methodName = methodName;

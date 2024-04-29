@@ -7,11 +7,10 @@ import java.util.HashMap;
 
 public class RenameMethodListener extends JavaParserBaseListener {
     HashMap<String, String> methodNameMap;
-    TokenStreamRewriter rewriter;
 
     public RenameMethodListener(HashMap<String, String> methodNameMap,
                                 CommonTokenStream tokens) {
-        this.rewriter = new TokenStreamRewriter(tokens);
+        super(tokens);
         this.methodNameMap = methodNameMap;
     }
 
