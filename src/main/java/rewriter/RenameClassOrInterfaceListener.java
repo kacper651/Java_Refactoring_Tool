@@ -21,7 +21,7 @@ public class RenameClassOrInterfaceListener extends BaseRenameListener {
     public void enterClassDeclaration(JavaParser.ClassDeclarationContext ctx) {
         String name = ctx.identifier().IDENTIFIER().getText();
         String extendsSomeClass = ctx.EXTENDS() != null ? ctx.EXTENDS().getText() : null;
-        String implementsSomeInterfaces = ctx.EXTENDS() != null ? ctx.EXTENDS().getText() : null;
+        String implementsSomeInterfaces = ctx.IMPLEMENTS() != null ? ctx.IMPLEMENTS().getText() : null;
 
         if (classOrInterfaceMap.containsKey(name) && renameType == RenameType.CLASS) {
             rewriter.replace(ctx.identifier().IDENTIFIER().getSymbol(), classOrInterfaceMap.get(name));
@@ -68,6 +68,15 @@ public class RenameClassOrInterfaceListener extends BaseRenameListener {
                 }
             }
 
+        }
+    }
+
+    // constructors
+    @Override
+    public void enterConstructorDeclaration(JavaParser.ConstructorDeclarationContext ctx) {
+        String name = ctx.identifier().IDENTIFIER().getText();
+        if (classOrInterfaceMap.containsKey(name)) {
+            rewriter.replace(ctx.identifier().IDENTIFIER().getSymbol(), classOrInterfaceMap.get(name));
         }
     }
 }

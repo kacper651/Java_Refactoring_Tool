@@ -1,6 +1,6 @@
 package input;
 
-interface IInput {
+interface new_IInput {
     void method1(int x, int y);
     void method2();
     void method3();
@@ -8,7 +8,7 @@ interface IInput {
 
 }
 
-public class Input implements IInput {
+public class Input implements new_IInput {
     // sample class fields
     private int x = 1;
     private int y = 2;
