@@ -5,7 +5,6 @@ import org.antlr.v4.runtime.CharStreams;
 import org.antlr.v4.runtime.CommonTokenStream;
 import org.antlr.v4.runtime.tree.ParseTree;
 import org.antlr.v4.runtime.tree.ParseTreeWalker;
-import org.antlr.v4.runtime.tree.xpath.XPath;
 
 import java.io.*;
 import java.nio.file.NoSuchFileException;
@@ -28,11 +27,13 @@ public class RefactoringTool {
         } catch (IOException e) {
             throw new RuntimeException(e);
         }
-        
+
+        JavaParserBaseListener renameListener = null;
         HashMap<String, String> variableMap = new HashMap<>();
         HashMap<String, String> methodNameMap = new HashMap<>();
         HashMap<String, String> parameterMap = new HashMap<>();
         HashMap<String, String> classOrInterfaceMap = new HashMap<>();
+        HashMap<String, String> classFieldMap = new HashMap<>();
 
 
         String configFile = "refactor_config.txt";
@@ -42,6 +43,7 @@ public class RefactoringTool {
         String methodName = null;
         RenameType renameType = RenameType.CLASS;
         OpType opType = OpType.CHANGE;
+        String classScope = "";
 
         // create lexer, parser, and parse tree
         JavaLexer lexer = new JavaLexer(input);
@@ -91,6 +93,7 @@ public class RefactoringTool {
                         methodName = options[0];
                         renameType = RenameType.valueOf(options[1]);
                         opType = OpType.valueOf(options[2]);
+                        classScope = options[3];
 
                         lineCounter++;
                         while ((line = br.readLine()) != null) {
@@ -108,26 +111,35 @@ public class RefactoringTool {
                                     case "method" -> methodNameMap.put(data[1], data[2]);
                                     case "class" -> classOrInterfaceMap.put(data[1], data[2]);
                                     case "param" -> parameterMap.put(data[1], data[2]);
+                                    case "classField" -> classFieldMap.put(data[1], data[2]);
                                 }
                             }
                         }
 
+                        System.out.println("Co chcesz zmienić: ");
+                        System.out.println("1. Parametry metody ");
+                        System.out.println("2. Pola klasy ");
+                        System.out.println("3. Nazwa klasy lub interfejsu ");
+                        System.out.println("4. Nazwa zmiennej lokalnej ");
+                        System.out.println("5. Nazwa metody ");
 
-                        JavaParserBaseListener renameListener = new RenameListener(variableMap, methodNameMap,
-                                                                            parameterMap, classOrInterfaceMap,
-                                                                            tokens, methodName,
-                                                                            renameType, opType);
+                        int choiceRenamer = scanner.nextInt();
+                        scanner.nextLine();
+
+                        switch (choiceRenamer){
+                            case 1 -> renameListener = new ChangeMethodParametersListener(parameterMap, tokens, methodName, opType);
+                            case 2 -> renameListener = new RenameClassFieldListener(classFieldMap, tokens, classScope);
+                            case 3 -> renameListener = new RenameClassOrInterfaceListener(classOrInterfaceMap, tokens, renameType);
+                            case 4 -> renameListener = new RenameLocalVariableListener(variableMap, tokens, methodName);
+                            case 5 -> renameListener = new RenameMethodListener(methodNameMap, tokens);
+                        }
 
                         walker.walk(renameListener, tree);
 
-                        XPath.findAll(tree, "//expression", parser).forEach(ctx -> {
-                            System.out.println(ctx.getText());
-                        });
-
-                        try (FileWriter writer = new FileWriter(inputPath)){
+                        try (FileWriter writer = new FileWriter("Out.java")){
+                            assert renameListener != null;
                             writer.write(renameListener.rewriter.getText());
-                            //System.out.println(renamerParam.rewriter.getText());
-                            System.out.println("Zapisano zmiany w pliku: " +  inputPath);
+                            System.out.println("Zapisano zmiany w pliku Out.java");
                         } catch (IOException e) {
                             throw new RuntimeException(e);
                         }
