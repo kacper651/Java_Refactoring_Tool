@@ -60,8 +60,8 @@ public class RenameClassFieldListener extends BaseRenameListener {
                 currentClassStack.peek().equals(classScope) &&
                 ctx.block().blockStatement() != null) {
             for (var blockStatementElem : ctx.block().blockStatement()) {
-                if (blockStatementElem.statement().expression() != null) {
-
+                if (blockStatementElem.statement() != null &&
+                        blockStatementElem.statement().expression() != null) {
                     for (var expressionElem : blockStatementElem.statement().expression()) {
                         if (expressionElem.expression() != null) {
 
